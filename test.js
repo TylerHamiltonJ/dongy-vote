@@ -7219,19 +7219,6 @@ const data = [
   },
 ];
 
-const electorates = [...new Set(data.map((m) => m.electorate))];
+const parties = [...new Set(data.map((m) => m.party))];
 
-console.log(
-  JSON.stringify(
-    electorates.map((m) => {
-      const el = data.filter((f) => f.electorate === m);
-      return {
-        electorate: m,
-        candidates: el.map((o) => ({ name: o.name, party: o.party })),
-        state: el[0].state,
-      };
-    }),
-    null,
-    2
-  )
-);
+console.log(parties);

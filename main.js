@@ -2,7 +2,7 @@ let resizeTrack;
 
 function checkResize() {
   clearTimeout(resizeTrack);
-  resizeTrack = setTimeout(resizeCanvas, 500);
+  resizeTrack = setTimeout(resizeCanvas, 100);
 }
 
 function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
@@ -11,14 +11,7 @@ function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
 }
 
 function resizeCanvas() {
-  const canvas = document.getElementById("sketchpad");
-  const h = screen.height;
-  const w = screen.width;
-  const infoHeight = 40;
   createBallot(selectedElectorate);
-  const info = document.getElementById("info");
-  info.style.height = `${infoHeight}px`;
-  info.style.width = `${canvas.width}px`;
 }
 window.onresize = checkResize;
 // get the canvas element and its context
