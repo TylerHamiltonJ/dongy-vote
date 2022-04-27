@@ -1,28 +1,32 @@
+let resizeTrack;
+
+function checkResize() {
+  clearTimeout(resizeTrack);
+  resizeTrack = setTimeout(resizeCanvas, 500);
+}
+
+function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
+  const ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+  return { width: srcWidth * ratio, height: srcHeight * ratio };
+}
+
 function resizeCanvas() {
   const canvas = document.getElementById("sketchpad");
-  const context = canvas.getContext("2d");
-  const h = window.innerHeight;
-  const w = window.innerWidth;
+  const h = screen.height;
+  const w = screen.width;
   const infoHeight = 40;
-  if (w <= 900) {
-    canvas.width = w;
-    canvas.height = h - infoHeight;
-  } else {
-    canvas.width = 900;
-    canvas.height = h - infoHeight;
-  }
+  createBallot(selectedElectorate);
   const info = document.getElementById("info");
   info.style.height = `${infoHeight}px`;
   info.style.width = `${canvas.width}px`;
 }
-window.onresize = resizeCanvas;
+window.onresize = checkResize;
 // get the canvas element and its context
 window.addEventListener(
   "load",
   function () {
     const canvas = document.getElementById("sketchpad");
     const context = canvas.getContext("2d");
-    resizeCanvas();
     var isIdle = true;
     function drawstart(event) {
       context.beginPath();

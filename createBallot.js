@@ -1,8 +1,4 @@
-function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
-  var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
-
-  return { width: srcWidth * ratio, height: srcHeight * ratio };
-}
+let selectedElectorate = "Cook";
 
 function getPartyLogo(party) {
   switch (party) {
@@ -18,7 +14,7 @@ function getPartyLogo(party) {
 }
 
 async function createBallot(electorate) {
-  const templateHTML = `<div id="copy">
+  const templateHTML = `
 <div class="header">
   <div style="background-image: url('./assets/auslogo.png')"></div>
   <div style="height: auto">House of Representatives Ballot Paper</div>
@@ -29,8 +25,9 @@ async function createBallot(electorate) {
 <div class="instructions">
   Number the boxes from 1 to <span id="num-of-candidates">8</span> in
   the order of your choice
-</div></div>`;
+</div>`;
   const ballotDiv = document.createElement("div");
+  ballotDiv.id = "copy";
   ballotDiv.innerHTML = templateHTML.trim();
   document.body.appendChild(ballotDiv);
   const selectedElectorate = electorates.find(
@@ -62,15 +59,21 @@ async function createBallot(electorate) {
   document.querySelector("#num-of-candidates").textContent =
     selectedElectorate.candidates.length;
   html2canvas(sourceDiv).then((canvas) => {
+    const h = screen.height;
+    const w = screen.width;
     const sketchpad = document.getElementById("sketchpad");
     const context = sketchpad.getContext("2d");
-    const size = calculateAspectRatioFit(
-      canvas.width,
-      canvas.height,
-      sketchpad.width,
-      sketchpad.height
-    );
-    console.log(size);
+    const size = calculateAspectRatioFit(canvas.width, canvas.height, w, h);
+    if (w <= 900) {
+      sketchpad.width = w;
+      sketchpad.height = h;
+    } else {
+      // If on large screen
+      // Make canvas the size of the ballot
+      sketchpad.width = size.width;
+      sketchpad.height = size.height;
+    }
+    context.clearRect(0, 0, sketchpad.width, sketchpad.height);
     context.drawImage(
       canvas,
       (sketchpad.width - size.width) / 2,
@@ -83,7 +86,7 @@ async function createBallot(electorate) {
 }
 
 window.onload = function () {
-  createBallot("Cook");
+  resizeCanvas();
   const electoratesEl = document.getElementById("electorates");
   const html = electorates
     .map((m) => m.electorate)
@@ -98,6 +101,7 @@ window.onload = function () {
         !(e instanceof InputEvent) ||
         e.inputType === "insertReplacementText"
       ) {
+        selectedElectorate = e.target.value;
         createBallot(e.target.value);
       }
     });
